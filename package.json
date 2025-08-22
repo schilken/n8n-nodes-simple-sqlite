@@ -7,6 +7,14 @@
     "sqlite"
   ],
   "license": "MIT",
+  "author": {
+    "name": "Alfred Schilken",
+    "email": "alfred@schilken.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schilken/n8n-nodes-simple-sqlite"
+  },
   "main": "index.js",
   "files": [
     "dist/**/*",
@@ -27,8 +35,7 @@
   "dependencies": {
     "sqlite3": "^5.1.6"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0",

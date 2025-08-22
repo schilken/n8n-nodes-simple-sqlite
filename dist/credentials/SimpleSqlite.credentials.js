@@ -10,7 +10,7 @@ class SimpleSqlite {
                 displayName: 'Database File Path',
                 name: 'databasePath',
                 type: 'string',
-                default: '/data/mydb.sqlite',
+                default: '/Users/username/n8n-data/mydb.sqlite',
                 required: true,
                 description: 'Path to the SQLite database file',
             },

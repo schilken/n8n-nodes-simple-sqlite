@@ -25,7 +25,7 @@ export class SimpleSqlite implements INodeType {
 		credentials: [
 			{
 				name: 'simpleSqlite',
-				required: false,
+				required: true,
 			},
 		],
 		properties: [
@@ -33,9 +33,9 @@ export class SimpleSqlite implements INodeType {
 				displayName: 'Database File',
 				name: 'database',
 				type: 'string',
-				default: '={{$credentials.simpleSqlite?.databasePath || "/data/mydb.sqlite"}}',
-				required: true,
-				description: 'Path to the SQLite database file. Uses the path from credentials if available.',
+				default: '',
+				required: false,
+				description: 'Path to the SQLite database file. If empty, uses the path from credentials.',
 			},
 			{
 				displayName: 'Resource',
@@ -273,7 +273,14 @@ export class SimpleSqlite implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const dbFile = this.getNodeParameter('database', i) as string;
+				let dbFile = this.getNodeParameter('database', i) as string;
+				
+				// If no database file specified, get it from credentials
+				if (!dbFile || dbFile.trim() === '') {
+					const credentials = await this.getCredentials('simpleSqlite');
+					dbFile = credentials.databasePath as string;
+				}
+				
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
 

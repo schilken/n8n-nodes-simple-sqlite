@@ -20,35 +20,6 @@ This installs the node directly to your local n8n nodes directory:
 ./install.sh
 ```
 
-Or manually:
-```bash
-# Build the node
-npm install
-npm run build
-
-# Install directly to n8n nodes directory
-cd ~/.n8n/nodes
-npm init -y  # Only needed if package.json doesn't exist
-npm install /path/to/this/n8n-nodes-simple-sqlite
-```
-
-### Method 2: Global Installation
-
-```bash
-npm install
-npm run build
-npm pack
-npm install -g ./n8n-nodes-simple-sqlite-*.tgz
-```
-
-### Method 3: Local n8n Project Installation
-
-If you're running n8n from a local project directory:
-```bash
-cd /path/to/your/n8n/project
-npm install /path/to/this/n8n-nodes-simple-sqlite
-```
-
 **After installation with any method, restart your n8n instance to see the node.**
 
 ## Usage

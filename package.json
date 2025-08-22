@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "Simple SQLite Node for n8n",
   "keywords": [
-    "n8n-community-node",
+    "n8n-community-node-package",
     "sqlite"
   ],
   "license": "MIT",
@@ -16,6 +16,9 @@
     "n8nNodesApiVersion": 1,
     "nodes": [
       "dist/nodes/SimpleSqlite.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/SimpleSqlite.credentials.js"
     ]
   },
   "scripts": {

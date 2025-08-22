@@ -22,13 +22,20 @@ export class SimpleSqlite implements INodeType {
 		},
 		inputs: [<NodeConnectionType>'main'],
 		outputs: [<NodeConnectionType>'main'],
+		credentials: [
+			{
+				name: 'simpleSqlite',
+				required: false,
+			},
+		],
 		properties: [
 			{
 				displayName: 'Database File',
 				name: 'database',
 				type: 'string',
-				default: '/data/mydb.sqlite',
+				default: '={{$credentials.simpleSqlite?.databasePath || "/data/mydb.sqlite"}}',
 				required: true,
+				description: 'Path to the SQLite database file. Uses the path from credentials if available.',
 			},
 			{
 				displayName: 'Resource',

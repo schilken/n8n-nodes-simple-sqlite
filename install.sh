@@ -9,31 +9,20 @@ echo "Building the node..."
 npm install
 npm run build
 
-# Check if n8n nodes directory exists
-N8N_NODES_DIR="$HOME/.n8n/nodes"
+DIST_DIR="./dist"
+
+# Check if n8n custom directory exists
+N8N_NODES_DIR="$HOME/.n8n/custom"
 if [ ! -d "$N8N_NODES_DIR" ]; then
-    echo "Creating n8n nodes directory: $N8N_NODES_DIR"
+    echo "Creating n8n custom directory: $N8N_NODES_DIR"
     mkdir -p "$N8N_NODES_DIR"
 fi
 
-# Initialize package.json if it doesn't exist
-if [ ! -f "$N8N_NODES_DIR/package.json" ]; then
-    echo "Initializing package.json in n8n nodes directory..."
-    cd "$N8N_NODES_DIR"
-    npm init -y > /dev/null 2>&1
-    cd - > /dev/null
-fi
-
+PACKAGE_NAME=$(node -p "require('./package.json').name")
 # Install the node directly to n8n nodes directory
-echo "Installing to n8n nodes directory: $N8N_NODES_DIR"
-cd "$N8N_NODES_DIR"
-npm install "$OLDPWD"
+TARGET_DIR="$N8N_NODES_DIR/$PACKAGE_NAME"
 
-echo ""
-echo "✅ SimpleSqlite node installed successfully!"
-echo "📍 Installed to: $N8N_NODES_DIR/node_modules/n8n-nodes-simple-sqlite"
-echo ""
-echo "🔄 Restart your n8n instance to see the SimpleSqlite node in the nodes panel."
-echo ""
-echo "To uninstall, run:"
-echo "  cd $N8N_NODES_DIR && npm uninstall n8n-nodes-simple-sqlite"
+echo "Installing to n8n nodes directory: $TARGET_DIR"
+rm -rf "$TARGET_DIR"
+mkdir -p "$TARGET_DIR"
+cp -r "$DIST_DIR/"* "$TARGET_DIR/"

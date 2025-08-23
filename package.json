@@ -21,7 +21,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc && npm run copy:images",
-    "copy:images": "cp nodes/**/*.svg nodes/**/*.png dist/nodes/SimpleSqlite",
+    "copy:images": "cp nodes/**/*.svg dist/nodes/SimpleSqlite",
     "dev": "tsc --watch",
     "run-dev": "npm run build && cross-env N8N_LOG_LEVEL=debug n8n start",
     "run-dev-tunnel": "npm run build && cross-env N8N_LOG_LEVEL=debug n8n start --tunnel",

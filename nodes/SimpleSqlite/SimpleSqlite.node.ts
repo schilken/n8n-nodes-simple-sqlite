@@ -269,7 +269,7 @@ export class SimpleSqlite implements INodeType {
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
             try {
                 // Get database file from credentials
-                const credentials = await this.getCredentials('simpleSqlite');
+                const credentials = await this.getCredentials('simpleSqliteApi');
                 const dbFile = credentials.databasePath as string;
                 
                 const resource = this.getNodeParameter('resource', itemIndex) as string;

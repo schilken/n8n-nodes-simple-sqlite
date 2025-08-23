@@ -15,10 +15,13 @@
     "type": "git",
     "url": "https://github.com/schilken/n8n-nodes-simple-sqlite"
   },
+    "engines": {
+    "node": ">=20.15"
+  },
   "main": "index.js",
   "scripts": {
-    "build": "tsc && npm run build:images",
-    "build:images": "cp nodes/*.svg nodes/*.png dist/nodes",
+    "build": "tsc && npm run copy:images",
+    "copy:images": "cp nodes/**/*.svg nodes/**/*.png dist/nodes/SimpleSqlite",
     "dev": "tsc --watch",
     "run-dev": "npm run build && cross-env N8N_LOG_LEVEL=debug n8n start",
     "run-dev-tunnel": "npm run build && cross-env N8N_LOG_LEVEL=debug n8n start --tunnel",
@@ -35,10 +38,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "nodes": [
-      "dist/nodes/SimpleSqlite.node.js"
+      "dist/nodes/SimpleSqlite/SimpleSqlite.node.js"
     ],
     "credentials": [
-      "dist/credentials/SimpleSqlite.credentials.js"
+      "dist/credentials/SimpleSqliteApi.credentials.js"
     ]
   },
   "dependencies": {

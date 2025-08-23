@@ -5,9 +5,10 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export class SimpleSqlite implements ICredentialType {
-	name = 'simpleSqlite';
-	displayName = 'Simple SQLite';
+export class SimpleSqliteApi implements ICredentialType {
+	name = 'simpleSqliteApi';
+	displayName = 'Simple SQLite API';
+	documentationUrl = 'https://github.com/schilken/n8n-nodes-simple-sqlite';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Database File Path',

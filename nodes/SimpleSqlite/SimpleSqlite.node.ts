@@ -5,6 +5,7 @@ import {
     INodeTypeDescription,
     IExecuteFunctions,
     NodeConnectionType,
+    NodeOperationError,
 } from 'n8n-workflow';
 
 import sqlite3 from 'sqlite3';
@@ -24,7 +25,7 @@ export class SimpleSqlite implements INodeType {
 		outputs: [<NodeConnectionType>'main'],
 		credentials: [
 			{
-				name: 'simpleSqlite',
+				name: 'simpleSqliteApi',
 				required: true,
 			},
 		],
@@ -33,6 +34,7 @@ export class SimpleSqlite implements INodeType {
                 displayName: 'Resource',
                 name: 'resource',
                 type: 'options',
+																noDataExpression: true,
                 options: [
                     { name: 'Record', value: 'record' },
                     { name: 'Table', value: 'table' },
@@ -43,14 +45,15 @@ export class SimpleSqlite implements INodeType {
                 displayName: 'Operation',
                 name: 'operation',
                 type: 'options',
+																noDataExpression: true,
                 displayOptions: {
                     show: { resource: ['record'] },
                 },
                 options: [
-                    { name: 'List', value: 'list' },
-                    { name: 'Insert', value: 'insert' },
-                    { name: 'Update', value: 'update' },
-                    { name: 'Delete', value: 'delete' },
+                    { name: 'List', value: 'list', action: 'List a record' },
+                    { name: 'Insert', value: 'insert', action: 'Insert a record' },
+                    { name: 'Update', value: 'update', action: 'Update a record' },
+                    { name: 'Delete', value: 'delete', action: 'Delete a record' },
                 ],
                 default: 'list',
             },
@@ -58,13 +61,14 @@ export class SimpleSqlite implements INodeType {
                 displayName: 'Operation',
                 name: 'operation',
                 type: 'options',
+																noDataExpression: true,
                 displayOptions: {
                     show: { resource: ['table'] },
                 },
                 options: [
-                    { name: 'Create', value: 'create' },
-                    { name: 'List', value: 'list' },
-                    { name: 'Info', value: 'info' },
+                    { name: 'Create', value: 'create', action: 'Create a table' },
+                    { name: 'List', value: 'list', action: 'List a table' },
+                    { name: 'Info', value: 'info', action: 'Info a table' },
                 ],
                 default: 'list',
             },
@@ -167,7 +171,6 @@ export class SimpleSqlite implements INodeType {
                     },
                 },
                 default: '',
-                required: false,
                 description: 'WHERE clause (e.g., "name = \'Alice\'")',
             },
             // Record Update Operation Fields
@@ -263,61 +266,71 @@ export class SimpleSqlite implements INodeType {
 		const items = this.getInputData();
 		const returnData: IDataObject[] = [];
 
-		for (let i = 0; i < items.length; i++) {
+		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
             try {
                 // Get database file from credentials
                 const credentials = await this.getCredentials('simpleSqlite');
                 const dbFile = credentials.databasePath as string;
                 
-                const resource = this.getNodeParameter('resource', i) as string;
-                const operation = this.getNodeParameter('operation', i) as string;
+                const resource = this.getNodeParameter('resource', itemIndex) as string;
+                const operation = this.getNodeParameter('operation', itemIndex) as string;
 
 				let query = '';
 
 				// Build SQL query based on resource and operation
 				if (resource === 'table') {
 					if (operation === 'create') {
-						const sql = this.getNodeParameter('sql', i) as string;
+						const sql = this.getNodeParameter('sql', itemIndex) as string;
 						if (!sql.trim()) {
-							throw new Error('SQL table definition cannot be empty');
+							throw new NodeOperationError(this.getNode(), new Error('SQL table definition cannot be empty'), {
+                                itemIndex,
+                            });
 						}
 						query = sql;
 					} else if (operation === 'list') {
 						query = `SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`;
 					} else if (operation === 'info') {
-						const tableName = this.getNodeParameter('table_name', i) as string;
+						const tableName = this.getNodeParameter('table_name', itemIndex) as string;
 						if (!tableName.trim()) {
-							throw new Error('Table name cannot be empty');
+							throw new NodeOperationError(this.getNode(), new Error('Table name cannot be empty'), {
+                                itemIndex,
+                            });
 						}
 						query = `SELECT sql FROM sqlite_master WHERE type='table' AND name='${tableName}';`;
 					}
 				} else if (resource === 'record') {
-					const tableName = this.getNodeParameter('table_name', i) as string;
+					const tableName = this.getNodeParameter('table_name', itemIndex) as string;
 					if (!tableName.trim()) {
-						throw new Error('Table name cannot be empty');
+						throw new NodeOperationError(this.getNode(), new Error('Table name cannot be empty'), {
+                            itemIndex,
+                        });
 					}
 
 					if (operation === 'insert') {
-						const fieldNames = this.getNodeParameter('field_names', i) as string;
-						const values = this.getNodeParameter('values', i) as string;
+						const fieldNames = this.getNodeParameter('field_names', itemIndex) as string;
+						const values = this.getNodeParameter('values', itemIndex) as string;
 						if (!fieldNames.trim() || !values.trim()) {
-							throw new Error('Field names and values cannot be empty');
+							throw new NodeOperationError(this.getNode(), new Error('Field names and values cannot be empty'), {
+                                itemIndex,
+                            });
 						}
 						query = `INSERT INTO ${tableName} (${fieldNames}) VALUES (${values});`;
 					} else if (operation === 'list') {
-						const whereClause = this.getNodeParameter('where_clause', i) as string;
+						const whereClause = this.getNodeParameter('where_clause', itemIndex) as string;
 						query = `SELECT * FROM ${tableName}`;
 						if (whereClause.trim()) {
 							query += ` WHERE ${whereClause}`;
 						}
 						query += ';';
 					} else if (operation === 'update') {
-						const fieldNames = this.getNodeParameter('field_names', i) as string;
-						const values = this.getNodeParameter('values', i) as string;
-						const whereClause = this.getNodeParameter('where_clause', i) as string;
+						const fieldNames = this.getNodeParameter('field_names', itemIndex) as string;
+						const values = this.getNodeParameter('values', itemIndex) as string;
+						const whereClause = this.getNodeParameter('where_clause', itemIndex) as string;
 						
 						if (!fieldNames.trim() || !values.trim() || !whereClause.trim()) {
-							throw new Error('Field names, values, and where clause cannot be empty for update operation');
+							throw new NodeOperationError(this.getNode(), new Error('Field names, values, and where clause cannot be empty for update operation'), {
+                                itemIndex,
+                            });
 						}
 
 						// Build SET clause by pairing field names with values
@@ -325,22 +338,28 @@ export class SimpleSqlite implements INodeType {
 						const vals = values.split(',').map(v => v.trim());
 						
 						if (fields.length !== vals.length) {
-							throw new Error('Number of field names must match number of values');
+							throw new NodeOperationError(this.getNode(), new Error('Number of field names must match number of values'), {
+                                itemIndex,
+                            });
 						}
 
 						const setClauses = fields.map((field, index) => `${field} = ${vals[index]}`);
 						query = `UPDATE ${tableName} SET ${setClauses.join(', ')} WHERE ${whereClause};`;
 					} else if (operation === 'delete') {
-						const whereClause = this.getNodeParameter('where_clause', i) as string;
+						const whereClause = this.getNodeParameter('where_clause', itemIndex) as string;
 						if (!whereClause.trim()) {
-							throw new Error('Where clause cannot be empty for delete operation');
+							throw new NodeOperationError(this.getNode(), new Error('Where clause cannot be empty for delete operation'), {
+                                itemIndex,
+                            });
 						}
 						query = `DELETE FROM ${tableName} WHERE ${whereClause};`;
 					}
 				}
 
 				if (!query.trim()) {
-					throw new Error('Unable to generate SQL query for the specified operation');
+					throw new NodeOperationError(this.getNode(), new Error('Unable to generate SQL query for the specified operation'), {
+                        itemIndex,
+                    });
 				}
 
 				const db = new sqlite3.Database(dbFile);
@@ -372,7 +391,7 @@ export class SimpleSqlite implements INodeType {
 					returnData.push({
 						error: error instanceof Error ? error.message : String(error),
 						json: {},
-						pairedItem: { item: i },
+						pairedItem: { item: itemIndex },
 					});
 				} else {
 					throw error;

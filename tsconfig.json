@@ -8,5 +8,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["nodes/**/*.ts", "credentials/**/*.ts"]
+  	"include": [
+		"credentials/**/*",
+		"nodes/**/*",
+		"nodes/**/*.json",
+		"package.json",
+	]
+
 }

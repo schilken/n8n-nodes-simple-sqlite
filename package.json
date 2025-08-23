@@ -16,6 +16,18 @@
     "url": "https://github.com/schilken/n8n-nodes-simple-sqlite"
   },
   "main": "index.js",
+  "scripts": {
+    "build": "tsc && npm run build:images",
+    "build:images": "copyfiles nodes/**/*.svg nodes/**/*.png dist/",    
+    "dev": "tsc --watch",
+    "run-dev": "npm run build && cross-env N8N_LOG_LEVEL=debug n8n start",
+    "run-dev-tunnel": "npm run build && cross-env N8N_LOG_LEVEL=debug n8n start --tunnel",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json",
+    "semantic-release": "semantic-release"
+  },
   "files": [
     "dist/**/*",
     "index.js"
@@ -28,9 +40,6 @@
     "credentials": [
       "dist/credentials/SimpleSqlite.credentials.js"
     ]
-  },
-  "scripts": {
-    "build": "tsc"
   },
   "dependencies": {
     "sqlite3": "^5.1.6"

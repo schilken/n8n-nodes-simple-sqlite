@@ -13,7 +13,7 @@ export class SimpleSqlite implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Simple SQLite',
 		name: 'simpleSqlite',
-		icon: 'file:sqlite.svg',
+		icon: 'file:SimpleSqlite.svg',
 		group: ['transform'],
 		version: 1,
 		description: 'Work with SQLite databases',
@@ -29,241 +29,233 @@ export class SimpleSqlite implements INodeType {
 			},
 		],
 		properties: [
-			{
-				displayName: 'Database File',
-				name: 'database',
-				type: 'string',
-				default: '',
-				required: false,
-				description: 'Path to the SQLite database file. If empty, uses the path from credentials.',
-			},
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				options: [
-					{ name: 'Record', value: 'record' },
-					{ name: 'Table', value: 'table' },
-				],
-				default: 'record',
-			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				displayOptions: {
-					show: { resource: ['record'] },
-				},
-				options: [
-					{ name: 'List', value: 'list' },
-					{ name: 'Insert', value: 'insert' },
-					{ name: 'Update', value: 'update' },
-					{ name: 'Delete', value: 'delete' },
-				],
-				default: 'list',
-			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				displayOptions: {
-					show: { resource: ['table'] },
-				},
-				options: [
-					{ name: 'Create', value: 'create' },
-					{ name: 'List', value: 'list' },
-					{ name: 'Info', value: 'info' },
-				],
-				default: 'list',
-			},
-			// Table Create Operation Fields
-			{
-				displayName: 'SQL Table Definition',
-				name: 'sql',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['table'],
-						operation: ['create'] 
-					},
-				},
-				default: 'CREATE TABLE IF NOT EXISTS users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    email TEXT UNIQUE NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);',
-				required: true,
-				description: 'SQL CREATE TABLE statement',
-			},
-			// Table Info Operation Fields
-			{
-				displayName: 'Table Name',
-				name: 'table_name',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['table'],
-						operation: ['info'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Name of the table to get info for',
-			},
-			// Record Insert Operation Fields
-			{
-				displayName: 'Table Name',
-				name: 'table_name',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['insert'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Name of the table to insert into',
-			},
-			{
-				displayName: 'Field Names',
-				name: 'field_names',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['insert'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Comma-separated field names (e.g., "name, email")',
-			},
-			{
-				displayName: 'Values',
-				name: 'values',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['insert'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Comma-separated values (e.g., "\'Alice\', \'alice@example.com\'")',
-			},
-			// Record List Operation Fields
-			{
-				displayName: 'Table Name',
-				name: 'table_name',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['list'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Name of the table to select from',
-			},
-			{
-				displayName: 'Where Clause',
-				name: 'where_clause',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['list'] 
-					},
-				},
-				default: '',
-				required: false,
-				description: 'WHERE clause (e.g., "name = \'Alice\'")',
-			},
-			// Record Update Operation Fields
-			{
-				displayName: 'Table Name',
-				name: 'table_name',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['update'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Name of the table to update',
-			},
-			{
-				displayName: 'Field Names',
-				name: 'field_names',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['update'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Comma-separated field names to update (e.g., "email")',
-			},
-			{
-				displayName: 'Values',
-				name: 'values',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['update'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Comma-separated values (e.g., "\'alice@newmail.com\'")',
-			},
-			{
-				displayName: 'Where Clause',
-				name: 'where_clause',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['update'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'WHERE clause (e.g., "name = \'Alice\'")',
-			},
-			// Record Delete Operation Fields
-			{
-				displayName: 'Table Name',
-				name: 'table_name',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['delete'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'Name of the table to delete from',
-			},
-			{
-				displayName: 'Where Clause',
-				name: 'where_clause',
-				type: 'string',
-				displayOptions: {
-					show: { 
-						resource: ['record'],
-						operation: ['delete'] 
-					},
-				},
-				default: '',
-				required: true,
-				description: 'WHERE clause (e.g., "name = \'Alice\'")',
-			},
+            {
+                displayName: 'Resource',
+                name: 'resource',
+                type: 'options',
+                options: [
+                    { name: 'Record', value: 'record' },
+                    { name: 'Table', value: 'table' },
+                ],
+                default: 'record',
+            },
+            {
+                displayName: 'Operation',
+                name: 'operation',
+                type: 'options',
+                displayOptions: {
+                    show: { resource: ['record'] },
+                },
+                options: [
+                    { name: 'List', value: 'list' },
+                    { name: 'Insert', value: 'insert' },
+                    { name: 'Update', value: 'update' },
+                    { name: 'Delete', value: 'delete' },
+                ],
+                default: 'list',
+            },
+            {
+                displayName: 'Operation',
+                name: 'operation',
+                type: 'options',
+                displayOptions: {
+                    show: { resource: ['table'] },
+                },
+                options: [
+                    { name: 'Create', value: 'create' },
+                    { name: 'List', value: 'list' },
+                    { name: 'Info', value: 'info' },
+                ],
+                default: 'list',
+            },
+            // Table Create Operation Fields
+            {
+                displayName: 'SQL Table Definition',
+                name: 'sql',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['table'],
+                        operation: ['create'] 
+                    },
+                },
+                default: 'CREATE TABLE IF NOT EXISTS users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    email TEXT UNIQUE NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);',
+                required: true,
+                description: 'SQL CREATE TABLE statement',
+            },
+            // Table Info Operation Fields
+            {
+                displayName: 'Table Name',
+                name: 'table_name',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['table'],
+                        operation: ['info'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Name of the table to get info for',
+            },
+            // Record Insert Operation Fields
+            {
+                displayName: 'Table Name',
+                name: 'table_name',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['insert'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Name of the table to insert into',
+            },
+            {
+                displayName: 'Field Names',
+                name: 'field_names',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['insert'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Comma-separated field names (e.g., "name, email")',
+            },
+            {
+                displayName: 'Values',
+                name: 'values',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['insert'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Comma-separated values (e.g., "\'Alice\', \'alice@example.com\'")',
+            },
+            // Record List Operation Fields
+            {
+                displayName: 'Table Name',
+                name: 'table_name',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['list'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Name of the table to select from',
+            },
+            {
+                displayName: 'Where Clause',
+                name: 'where_clause',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['list'] 
+                    },
+                },
+                default: '',
+                required: false,
+                description: 'WHERE clause (e.g., "name = \'Alice\'")',
+            },
+            // Record Update Operation Fields
+            {
+                displayName: 'Table Name',
+                name: 'table_name',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['update'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Name of the table to update',
+            },
+            {
+                displayName: 'Field Names',
+                name: 'field_names',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['update'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Comma-separated field names to update (e.g., "email")',
+            },
+            {
+                displayName: 'Values',
+                name: 'values',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['update'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Comma-separated values (e.g., "\'alice@newmail.com\'")',
+            },
+            {
+                displayName: 'Where Clause',
+                name: 'where_clause',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['update'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'WHERE clause (e.g., "name = \'Alice\'")',
+            },
+            // Record Delete Operation Fields
+            {
+                displayName: 'Table Name',
+                name: 'table_name',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['delete'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'Name of the table to delete from',
+            },
+            {
+                displayName: 'Where Clause',
+                name: 'where_clause',
+                type: 'string',
+                displayOptions: {
+                    show: { 
+                        resource: ['record'],
+                        operation: ['delete'] 
+                    },
+                },
+                default: '',
+                required: true,
+                description: 'WHERE clause (e.g., "name = \'Alice\'")',
+            },
 		],
 	};
 
@@ -272,17 +264,13 @@ export class SimpleSqlite implements INodeType {
 		const returnData: IDataObject[] = [];
 
 		for (let i = 0; i < items.length; i++) {
-			try {
-				let dbFile = this.getNodeParameter('database', i) as string;
-				
-				// If no database file specified, get it from credentials
-				if (!dbFile || dbFile.trim() === '') {
-					const credentials = await this.getCredentials('simpleSqlite');
-					dbFile = credentials.databasePath as string;
-				}
-				
-				const resource = this.getNodeParameter('resource', i) as string;
-				const operation = this.getNodeParameter('operation', i) as string;
+            try {
+                // Get database file from credentials
+                const credentials = await this.getCredentials('simpleSqlite');
+                const dbFile = credentials.databasePath as string;
+                
+                const resource = this.getNodeParameter('resource', i) as string;
+                const operation = this.getNodeParameter('operation', i) as string;
 
 				let query = '';
 
